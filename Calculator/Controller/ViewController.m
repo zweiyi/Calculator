@@ -41,13 +41,6 @@
         [button addTarget:self action:@selector(clickButton:) forControlEvents:UIControlEventTouchUpInside];
         
     }
-    float num1 = 5.3;
-    float num2 = 9.2;
-    float reslut = num1 + 2.6 - num2;
-    NSNumber *num = [NSNumber numberWithDouble:reslut];
-    NSLog(@"%f", reslut);
-    NSString *str = [NSString stringWithFormat:@"%@", num];
-    NSLog(@"%@",str );
 }
 
 -(void)clickButton:(UIButton *)button {
@@ -56,7 +49,7 @@
         self.calview.textView.text = @"";
         [_dataString setString:@""];
     } else if (button.tag == 107) {
-        NSLog(@"dengyu");
+//        NSLog(@"dengyu");
         [_dataString appendString:@"#"];
         _calculatorModel.messageString = _dataString;
         [_calculatorModel Exp];
@@ -78,6 +71,10 @@
         [_dataString appendString:button.titleLabel.text];
         self.calview.textView.text = _dataString;
     }
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
 }
 
 @end

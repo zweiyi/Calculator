@@ -53,7 +53,7 @@ int compare (char ch_top, char ch_cur) {
             m_cur = i;
         }
     }
-    NSLog(@"bijiao %d", cmp[m_top][m_cur]);
+//    NSLog(@"bijiao %d", cmp[m_top][m_cur]);
     return cmp[m_top][m_cur];
     
     
@@ -131,7 +131,7 @@ double Execute(double num1, char ch, double num2) {
             result =  num1 / num2;
             break;
     }
-    NSLog(@"%f %c %f", num1, ch, num2);
+//    NSLog(@"%f %c %f", num1, ch, num2);
     return result;
 }
 
@@ -146,6 +146,43 @@ int Inopset(char ch) {
     return 0;
 }
 
+-(void)IsRight:(const char *) string {
+    char ch;
+    int len;
+    int top = 0;
+    len = (int)strlen(string);
+    for (int i = 0; i < len; i++) {
+        ch = string[i];
+        if (ch == '(') {
+            top++;
+        }
+        if (ch == ')') {
+            if (top == 0) {
+                _flagsucc = 0;
+                break;
+            } else {
+                top--;
+            }
+        }
+    }
+    if (top != 0) {
+        _flagsucc = 0;
+    } else {
+        ;
+    }
+    for (int i = 0; i < len - 1; i++) {
+        if (string[i] == ')' && !Inopset(string[i + 1])) {
+            _flagsucc = 0;
+            break;
+        }
+        if (Inopset(string[i]) && Inopset(string[i + 1]) && string[i] != '(' && string[i] != ')' && string[i + 1] != '(' && string[i + 1] != ')') {
+            _flagsucc = 0;
+            break;
+        }
+    }
+   
+}
+
 -(void)Exp {
     int len, i = 0;
    const char *mess;
@@ -153,34 +190,14 @@ int Inopset(char ch) {
     double data, num1, num2, res;
     mess = [_messageString cStringUsingEncoding:NSUTF8StringEncoding];
     len = (int) strlen(mess);
-    NSLog(@"mess  %s", mess);
-    NSLog(@"len  %d", len);
     OPTR *optr_top;
     Num *num_top;
     optr_top = InitOPTR();
     num_top = InitNum();
     PushOPTR(optr_top, '#');
     ch = mess[i];
-    for (int j = 0; j < len - 1; j++) {
-        if (Inopset(mess[j]) && Inopset(mess[j + 1])) {
-            _flagsucc = 0;
-            break;
-        }
-    }
-    int numleft = 0;
-    int numright = 0;
-    for (int j = 0; j < len; j++) {
-        if (mess[j] == '(') {
-            numleft++;
-        }
-        if (mess[j] == ')') {
-            numright++;
-        }
-    }
-    if (numleft != numright) {
-        _flagsucc = 0;
-    }
-    if (_flagsucc) {
+    [self IsRight:mess];
+    if (_flagsucc != 0) {
         while (ch != '#' || GetOPTR(optr_top) != '#') {
             if (!Inopset(ch)) {
 //                NSLog(@"ch === %c", ch);
@@ -189,7 +206,7 @@ int Inopset(char ch) {
                 ch = mess[i];
                 int flag = 0;       //含小数点
                 while (!Inopset(ch)) {
-                    NSLog(@"data == %f", data);
+//                    NSLog(@"data == %f", data);
                     if (ch == '.') {
                         flag = 1;
                         i++;
@@ -197,9 +214,10 @@ int Inopset(char ch) {
                         continue;
                     }
                     if (flag) {
-                        data = data + (ch - '0') * 0.1;
+                        data = data + (ch - '0') * pow(10, -flag);
+                        flag++;
                         //data = data * 10 + ch - '0';
-                        NSLog(@"1=");
+//                        NSLog(@"1=");
                     } else {
                         //flag = 1;
                         data = data * 10 + ch - '0';
@@ -232,7 +250,7 @@ int Inopset(char ch) {
                 }
             }
         }
-        _result = [NSNumber numberWithDouble:GetNum(num_top)];
+        _result = [NSNumber numberWithFloat:GetNum(num_top)];
     }
     
 }
